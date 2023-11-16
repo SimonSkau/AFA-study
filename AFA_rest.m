@@ -24,7 +24,7 @@ procResult.SD = enPruneChannels(d,SD,ones(size(t)),[1e-4  1e+0 ],15,[0.0 40.0],3
 
 procResult.SD.MeasListAct(end/2+1:end) = procResult.SD.MeasListAct(1:end/2); %This shouldn't be necessary, not sure why it is
 
-procResult.dod = hmrBandpassFilt(procResult.dod,fs,0.05,0.5);
+procResult.dod = hmrBandpassFilt(procResult.dod,fs,0.01,0.5);
 
 procResult.tInc = ones(size(t));
 %Try removing 1st principal component from whole dataset
@@ -44,7 +44,7 @@ procResult.dod = hmrMotionCorrectSpline(procResult.dod, t, procResult.SD, [procR
 
 %procResult.dodPCA = hmrBandpassFilt(procResult.dodPCArecursePCA,fs,0.01,0.2);
 
-XX = []; % this is based on age for each individual inorder to get the pathlanget factor. This is take from Scholkmann F, Wolf M.
+XX = []; % this is based on age for each individual inorder to get the pathlanget factor. Values are not added here due to anonymity. This is take from Scholkmann F, Wolf M.
 %General equation for the differential pathlength factor of the 499 frontal human head depending on wavelength and age. Journal
 %of biomedical optics.500 2013;18(10):105004- 
 
