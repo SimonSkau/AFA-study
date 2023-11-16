@@ -2,7 +2,7 @@
 clc
 close all
 clear all
-patcon = {'AFA_pat_Stroop_','AFA_con_Stroop_'};
+patcon = {'AFA_pat_Stroop_','AFA_C_Stroop_'};
 patconLength = [40];
 for groupID = [1:2]; %1 pateints, 2 controls
 for subID =  [1:20];%[number of particpants in each group i.e. N=20]
@@ -19,7 +19,7 @@ mlActAuto = hmrR_PruneChannels(snirf.data, snirf.probe ,procResult.mlActMan , pr
 nSV = 0;
 dod = hmrR_Intensity2OD( snirf.data );
 [dod3, svs, nSV] = hmrR_PCAFilter( dod, mlActAuto, procResult.tInc, nSV );
-dod2 = hmrR_BandpassFilt(dod3, 0.05, 0.5);
+dod2 = hmrR_BandpassFilt(dod3, 0.01, 0.5);
 
 tMotion = 0.5;% Units of seconds.    Typical value ranges from 0.1 to 0.5.
 tMask = 1; %Units of seconds. Typical value ranges from 0.5 to 1
@@ -30,7 +30,7 @@ procResult.tIncAuto = hmrR_MotionArtifact(snirf.data, snirf.probe, procResult.ml
 tRange =[-5 5];
 [procResult.stim, tRange] = hmrR_StimRejection(snirf.data, snirf.stim, procResult.tIncAuto, procResult.tInc, tRange);
 
-XX = []; %this is based on age for each individual inorder to get the pathlanget factor. This is take from Scholkmann F, Wolf M.
+XX = []; %this is based on age for each individual inorder to get the pathlanget factor. The data is not shown here due to anonymity. This is take from Scholkmann F, Wolf M.
 %General equation for the differential pathlength factor of the 499 frontal human head depending on wavelength and age. Journal
 %of biomedical optics.500 2013;18(10):105004- 
  dc = hmrR_OD2Conc( dod2, snirf.probe, [XX(subID,:)] );
@@ -42,12 +42,12 @@ procResult.mlActAuto = mlActAuto;
 procResult.Aaux = [];
 rcMap = [];%snirf.aux;
 trange = [-2 12 ]; 
-glmSolveMethod = 1;
+glmSolveMethod = 2;
 idxBasis = 1;
-paramsBasis = [0.5 0.5];%[0.1 3.0 1.8 3.0];%[0.1 3.0 1.8 3.0];
+paramsBasis = [0.5 0.5];%
 rhoSD_ssThresh = 15;
 flagNuisanceRMethod = 2;
-driftOrder = 3;
+driftOrder = 0;
 c_vector = 0;
 [dcAvg, dcAvgStd, nTrials, dcNew, dcResid, dcSum2, beta, R, hmrstats] = hmrR_GLM(dc, procResult.stim, snirf.probe, procResult.mlActAuto, procResult.Aaux, procResult.tInc, rcMap, trange, glmSolveMethod, idxBasis, paramsBasis, rhoSD_ssThresh, flagNuisanceRMethod, driftOrder, c_vector);
 % [data_yavg, data_yavgstd, nTrials, data_ynew, data_yresid, data_ysum2, beta_blks, yR_blks, hmrstats] = ...
@@ -60,7 +60,7 @@ oxy2{groupID}{subID} = squeeze(result(:,1,:,2));
 
 
 % hh1 = figure; %Array figure
-% plotProbe_old(squeeze(result(:,:,:,1)), dcAvg.time, snirf.Get_SD, hh1, [], [1 1]);
+% plotProbe_old(squeeze(result(:,:,:,1)), dcAvg.time, snirf.Get_SD, hh1, [], [1 1]); % the plotProbe_old is the plotProbe from Homer2
 
 
 %ROI is Regions of intrestes
