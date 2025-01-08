@@ -11,7 +11,7 @@ for subID = 1:patconLength(subType);
 load([patcon{subType} num2str(subID) '.nirs'],'-mat');
 
 [subType subID ]
-ncomp = 0;
+ncomp = 0; 
 %Run basic processing stream
 trange = [-5 300]; 
 fs = length(t)/max(t);
@@ -22,27 +22,26 @@ procResult.dod = hmrIntensity2OD(d);
 
 procResult.SD = enPruneChannels(d,SD,ones(size(t)),[1e-4  1e+0 ],15,[0.0 40.0],3);
 
-procResult.SD.MeasListAct(end/2+1:end) = procResult.SD.MeasListAct(1:end/2); %This shouldn't be necessary, not sure why it is
+procResult.SD.MeasListAct(end/2+1:end) = procResult.SD.MeasListAct(1:end/2); 
 
 procResult.dod = hmrBandpassFilt(procResult.dod,fs,0.01,0.5);
 
 procResult.tInc = ones(size(t));
-%Try removing 1st principal component from whole dataset
+
 
 procResult.dod = enPCAFilter(procResult.dod,procResult.SD,procResult.tInc,[ncomp ncomp]);
+%Try removing 1st principal component from whole dataset
 
 STDEVthresh = 30;
 AMPthresh =  1;
 [procResult.tInc, procResult.tIncCh] = hmrMotionArtifactByChannel(procResult.dod, fs, procResult.SD, ones(length(d),1), 1, 5, STDEVthresh, AMPthresh); %procResult.tInc was before procResult.SD
 %[procResult.tIncPCA, procResult.tIncChPCA] = hmrMotionArtifactByChannel(dod_PCA, fs, procResult.SD, ones(length(d),1), 1, 5, STDEVthresh, AMPthresh); %procResult.tInc was before procResult.SD
 
-p = 0.99; %recommended in the littreture, -1 to not use spline
+p = -1; %recommended in the littreture, -1 to not use spline
 procResult.dod = hmrMotionCorrectSpline(procResult.dod, t, procResult.SD, [procResult.tInc, procResult.tIncCh], p); %procResult.tIncCh
 %procResult.dodSplinePCA = hmrMotionCorrectSpline(dod_PCA, t, procResult.SD, [procResult.tInc, procResult.tIncCh], p); %procResult.tIncCh
 
 %[procResult.dodPCA,svs,nSV] = hmrMotionCorrectPCA(procResult.SD, procResult.dodSpline, procResult.tInc, nSV );
-
-%procResult.dodPCA = hmrBandpassFilt(procResult.dodPCArecursePCA,fs,0.01,0.2);
 
 XX = []; % this is based on age for each individual inorder to get the pathlanget factor. Values are not added here due to anonymity. This is take from Scholkmann F, Wolf M.
 %General equation for the differential pathlength factor of the 499 frontal human head depending on wavelength and age. Journal
